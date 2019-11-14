@@ -1,0 +1,8 @@
+# Server API side
+/venv/
+/migrations/
+/__pycache__/
+
+--app.py
+input_data.json
+torr.db
