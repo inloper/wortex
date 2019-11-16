@@ -1,5 +1,8 @@
-VS code settings
+# VS code settings
 .vscode
 
-Local todo list (vscode TODO+ plugin)
+# Local todo list (vscode TODO+ plugin)
 .todo
+
+# Instance folder user for configuration parameters
+/instance
