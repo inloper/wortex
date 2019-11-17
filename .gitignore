@@ -5,4 +5,4 @@
 .todo
 
 # Instance folder user for configuration parameters
-/instance
+/server/instance
