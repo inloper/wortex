@@ -6,51 +6,30 @@ import os
 
 from bs4 import BeautifulSoup
 from urllib.request import urljoin, urlparse
-from sqlalchemy import create_engine, Column, Integer, Text, ForeignKey
+from sqlalchemy import create_engine#, Column, Integer, Text, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relation
 
+from models import TorrData
 
-def start_scraping():
-    print('--- scraping started', time.asctime( time.localtime(time.time()) ))
-    get_all_website_links(START_URLS)
+def start_scraping(tag):
+    print('--- scraping started | ' + tag + ' | ' + time.asctime( time.localtime(time.time()) ))
+    get_all_website_links(START_URLS + tag)
     scraped_data = fetch_page(internal_urls)
 
     a = TorrDataPipeline(scraped_data)
     a.process_item(scraped_data)
     print('--- scraping ended', time.asctime( time.localtime(time.time()) ))
 
-# ----------------- move to items.py -----------------
-# ----------------- move to items.py END--------------
-
-
 # ----------------- DATABASE -----------------
 Base = declarative_base()
 
 def db_connect():
-    return create_engine('sqlite:///torr.db')
+    return create_engine('sqlite:///d:\\dev\\wortex\\server\\instance\\torr.db')
 
 def create_data_table(engine):
     Base.metadata.create_all(engine)
 
-class TorrData(Base):
-    __tablename__ = 'torrData'
-
-    id      = Column('id', Integer, primary_key=True)
-    title   = Column('title', Text)
-    mlink   = Column('mlink', Text)
-    image   = Column('image', Text)
-    date    = Column('date', Text)
-    size    = Column('size', Text)
-
-    # def __init__(self, id, title, mlink, image, date, size):
-    #     self.id         = id
-    #     self.title      = title
-    #     self.mlink      = mlink
-    #     self.image      = image
-    #     self.date       = date
-    #     self.size       = size
-# ----------------- DATABASE END---------------
 
 class TorrDataPipeline(object):
 

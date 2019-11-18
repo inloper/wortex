@@ -104,9 +104,9 @@ export default {
   input[type=text] {
     background-color: #6c757d;
     width: 250px;
-    height: 45px;
+    height: 30px;
     border: none;
-    border-radius: 4px;
+    border-radius: 1px;
   }
   input[type=text]:focus {
     border: 1px solid #272727;

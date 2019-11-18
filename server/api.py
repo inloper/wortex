@@ -1,6 +1,5 @@
 # Provides the API endpoints
 # REST requests and responses
-
 from functools import wraps
 from datetime import datetime, timedelta
 from flask import Blueprint, jsonify, request, current_app
@@ -8,12 +7,9 @@ import jwt
 import asyncio
 import re
 
-#REPLACE
-from sqlalchemy.ext.automap import automap_base
-from sqlalchemy.orm import sessionmaker, mapper
-
-from models import db, User
+from models import db, User, TorrData
 from scraper import start_scraping
+from rss_feeder import feedParser
 
 api = Blueprint('api', __name__)
 loop = asyncio.get_event_loop()
@@ -52,30 +48,45 @@ def token_required(f):
             return jsonify(invalid_msg), 401
     return _verify
 
-async def preparing_scrap():
-    start_scraping()
+async def preparing_scrap(tag):
+    start_scraping(tag)
     return "FALSE"
 
 
+""" ------------------- API ROUTES ------------------- """
 @api.route('/users')
 @token_required
 def users():
     response = User.query.all()
     return jsonify(response)
 
-@api.route('/register', methods=['POST'])
-def register():
-    data = request.get_json()
-    user = User(**data)
-    db.session.add(user)
-    db.session.commit()
-    return jsonify(user.to_dict()), 201
+#register user - delete not necessery for this app
+# @api.route('/register', methods=['POST'])
+# def register():
+#     if request.method == "POST":
+#         newUser = User(username=request.form['username'], password=request.form['password'])
+#         db.session.add(newUser)
+#         db.session.commit()
+#         return jsonify(user.to_dict()), 201
+
+# Podcasts route / using pythons rssfeeder library to process rss feed
+@api.route('/podcasts/<name>', methods=['GET'])
+def podcasts(name):
+    if name == 'recode':
+        feed_parser = feedParser('https://feeds.megaphone.fm/recodedecode')
+        return jsonify({'status': 'success',
+                        'rss_entries': feed_parser})
+    elif name == 'earth911':
+        feed_parser = feedParser('https://www.spreaker.com/show/2898651/episodes/feed')
+        return jsonify({'status': 'success',
+                        'rss_entries': feed_parser})
+    else:
+        return 404
 
 @api.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
     user = User.authenticate(**data)
-
     if not user:
         return jsonify( {'message': 'Invalid creadentials', 'authenticated': False} ), 401
 
@@ -86,30 +97,30 @@ def login():
         current_app.config['SECRET_KEY'])
     return jsonify({ 'token': token.decode('UTF-8') })
 
-
-
-
-
+# start scraping process
 @api.route('/scraper', methods=['GET'])
+# @token_required
 def scraper():
-    loop.run_until_complete(preparing_scrap())
+    loop.run_until_complete(preparing_scrap('browse/'))
     return "OK"
 
+# search string from the response on torr
+@api.route('/scraper/search=', methods=['POST'])
+# @token_required
+def search():
+    if request.method == 'POST':
+        result = request.get_json()
+        loop.run_until_complete(preparing_scrap('search/' + result['body']))
+    return "OK"
 
-
-# Get all models
-@api.route('/torr', methods=['GET'])
+# Load data from the database and display them
+@api.route('/torr', methods=['GET', 'POST'])
+# @token_required
 def all_torr_data():
-    #REPLACE
-    Base = automap_base()
-    Base.prepare(db.engine, reflect=True)
-    Data = Base.classes.torrData
-
+    results = TorrData.query.all()
     torr_data = []
-    results = db.session.query(Data).all()
 
     for entry in results:
-        # print("-------------", entry.mlink.strip("\'"))
         case = {'id': entry.id,'title': re.sub(r'[^a-zA-Z 0-9]', '', entry.title), 'mlink': entry.mlink.strip("\'"), 'image': entry.image, 'date': entry.date, 'size': entry.size}
         torr_data.append(case)
 

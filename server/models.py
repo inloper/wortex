@@ -1,7 +1,6 @@
 '''
 Data classes for the application
 '''
-
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 
@@ -9,6 +8,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 db = SQLAlchemy()
 
+# DB MODELS User for authentication and login
 class User(db.Model):
     __tablename__ = 'users'
 
@@ -36,3 +36,22 @@ class User(db.Model):
 
     def to_dict(self):
         return dict(id=self.id, username=self.username)
+
+# DB MODEL  for scraped data
+class TorrData(db.Model):
+    __tablename__ = 'torrData'
+
+    id      = db.Column(db.Integer, primary_key=True)
+    title   = db.Column(db.Text)
+    mlink   = db.Column(db.Text)
+    image   = db.Column(db.Text)
+    date    = db.Column(db.Text)
+    size    = db.Column(db.Text)
+
+    def to_dict(self):
+        return dict(id=self.id,
+                    title=self.title,
+                    mlink=self.mlink,
+                    image=self.mliimagenk,
+                    date=self.date,
+                    size=self.size)

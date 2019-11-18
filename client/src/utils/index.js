@@ -7,7 +7,7 @@ export function isValidJwt (jwt) {
         return false
     }
     const data = JSON.parse(atob(jwt.split('.')[1]))
-    const exp = new Date(data.exp * 1000) // js deals in miliseconds
+    const exp = new Date(data.exp * 3000) // js deals in miliseconds
     const now = new Date()
     return now < exp
 }

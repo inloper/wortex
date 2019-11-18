@@ -1,9 +1,8 @@
 <template>
   <div class="container-fluid">
     <div class="row">
-      <input type="text" v-model="search" placeholder=" filter">
+      <input type="text" class="form-control form-control-sm" v-model="search" placeholder=" filter">
       <Search />
-      <hr><br><br>
       <table class="table table-hover table-dark hover_img">
         <div v-if="torr_data.length">
         <thead>
@@ -14,7 +13,6 @@
             <th></th>
           </tr>
         </thead>
-
         <tbody v-if="torr_data.length">
           <tr v-for="(item, index) in filterTitles.slice().reverse()" :key="index">
             <th scope="row" class="gray-txt">{{ item.date }}</th>

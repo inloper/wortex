@@ -9,7 +9,7 @@ Vue.use(Vuex)
 const state = {
   // single source of data
   user: {},
-  jwt: ''
+  jwt: {'token': localStorage.getItem('token')}
 }
 
 const actions = {
@@ -40,11 +40,11 @@ const actions = {
 const mutations = {
   // isolated data mutations
   setUserData (state, payload) {
-    console.log('setUserData payload = ', payload)
+    // console.log('setUserData payload = ', payload)
     state.userData = payload.userData
   },
   setJwtToken (state, payload) {
-    console.log('setJwtToken payload = ', payload)
+    // console.log('setJwtToken payload = ', payload)
     localStorage.token = payload.jwt.token
     state.jwt = payload.jwt
   }
