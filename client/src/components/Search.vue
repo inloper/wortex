@@ -1,18 +1,16 @@
 <template>
 	<div>
 		<div class="row">
-			<form v-on:submit.prevent="search_string" method="POST">
+			<form v-on:submit.prevent="searchString" method="POST">
 				<input class="form-control form-control-sm" type="text" v-model="searched_string" placeholder=' browse' />
 				<button class="btn btn-primary btn-sm">search</button>
 			</form>
-			<button @click="searchButton" class="btn btn-info btn-sm"> Update </button>
+			<button @click="updateButton" class="btn btn-info btn-sm"> Update </button>
 		</div>
 	</div>
 </template>
 
 <script>
-import {HTTP} from '@/http-common'
-
 export default {
   name: "Search",
   data() {
@@ -22,13 +20,13 @@ export default {
     }
   },
 	methods: {
-		searchButton() {
-			// this.searching = false
-			HTTP.get('scraper')
-		},
-    search_string () {
-			console.log(this.searched_string)
-			HTTP.post('scraper/search=', {body: this.searched_string})
+    updateButton() {
+      this.$store.dispatch('scraper')
+        .then(() => this.$router.push('/torr'))
+    },
+    searchString() {
+			this.$store.dispatch('searchedString', {body: this.searched_string})
+        .then(() => this.$router.push('/torr'))
     },
 	}
 }

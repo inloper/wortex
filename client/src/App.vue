@@ -156,5 +156,11 @@ export default {
     margin: 0 0 0;
     color: #747474;
   }
+  .success {
+    width: 15%;
+    height: 15px;
+    margin-left:auto;
+    margin-right:0;
+  }
 
 </style>

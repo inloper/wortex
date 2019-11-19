@@ -1,9 +1,8 @@
 import requests
 import time
 import random
-import json
 import os
-
+import configparser
 from bs4 import BeautifulSoup
 from urllib.request import urljoin, urlparse
 from sqlalchemy import create_engine#, Column, Integer, Text, ForeignKey
@@ -11,6 +10,13 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relation
 
 from models import TorrData
+
+BASEDIR = os.path.abspath(os.path.dirname(__file__))
+configParser = configparser.RawConfigParser()
+configParser.read(BASEDIR+'\\instance\\external_links.cfg')
+
+START_URLS = configParser.get('TORR_LINKS', 'INITIAL_URL')
+URL_PREFIX = configParser.get('TORR_LINKS', 'PREFIX_URL')
 
 def start_scraping(tag):
     print('--- scraping started | ' + tag + ' | ' + time.asctime( time.localtime(time.time()) ))
@@ -25,7 +31,7 @@ def start_scraping(tag):
 Base = declarative_base()
 
 def db_connect():
-    return create_engine('sqlite:///d:\\dev\\wortex\\server\\instance\\torr.db')
+    return create_engine('sqlite:///' + BASEDIR +'\\instance\\torr.db')
 
 def create_data_table(engine):
     Base.metadata.create_all(engine)
@@ -66,16 +72,8 @@ class TorrDataPipeline(object):
                     session.close()
             else:
                 session.close()
-# ----------------- DB connection and processing END --------------
 
 
-INPUT_DATA = os.path.abspath(os.path.join(os.path.dirname( __file__ ), 'input_data.json'))
-with open(INPUT_DATA, 'r') as input_data:
-    data = input_data.read()
-obj = json.loads(data)
-
-START_URLS = str(obj['INITIAL_URL'])
-URL_PREFIX = str(obj['PREFIX_URL'])
 # initialize the set of links (unique links)
 internal_urls = set()
 external_urls = set()

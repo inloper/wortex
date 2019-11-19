@@ -10,25 +10,23 @@
     </section>
     <section class="section">
       <div class="container">
-        <div class="field">
-          <label class="label is-large" for="username">Username:</label>
-          <div class="control">
-            <input type="username" class="input is-large" id="username" v-model="username">
+        <form v-on:keyup.enter="authenticate()">
+          <div class="field">
+            <label class="label is-large" for="username">Username:</label>
+            <div class="control">
+              <input type="username" class="input is-large" id="username" v-model="username">
+            </div>
           </div>
-        </div>
-        <div class="field">
-          <label class="label is-large" for="password">Password:</label>
-          <div class="control">
-            <input type="password" class="input is-large" id="password" v-model="password">
+          <div class="field">
+            <label class="label is-large" for="password">Password:</label>
+            <div class="control">
+              <input type="password" class="input is-large" id="password" v-model="password">
+            </div>
           </div>
-        </div>
-
-        <div class="control">
-          <button @click="authenticate">Login</button>
-          <!-- <a class="button is-large is-success" @click="register">Register</a> -->
-          <!-- <a class="button is-large is-primary" @click="authenticate">Login</a> -->
-        </div>
-
+          <!-- <div class="control">
+            <a class="button is-large is-success" @click="register">Register</a>
+          </div> -->
+        </form>
       </div>
     </section>
 
@@ -36,8 +34,6 @@
 </template>
 
 <script>
-//import axios from 'axios'
-//import {HTTP} from '@/http-common'
 import { EventBus } from '@/utils'
 
 export default {

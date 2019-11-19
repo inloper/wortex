@@ -6,6 +6,8 @@ from flask import Blueprint, jsonify, request, current_app
 import jwt
 import asyncio
 import re
+import os
+import configparser
 
 from models import db, User, TorrData
 from scraper import start_scraping
@@ -14,6 +16,11 @@ from rss_feeder import feedParser
 api = Blueprint('api', __name__)
 loop = asyncio.get_event_loop()
 
+
+
+BASEDIR = os.path.abspath(os.path.dirname(__file__))
+configParser = configparser.RawConfigParser()
+configParser.read(BASEDIR+'\\instance\\external_links.cfg')
 
 def token_required(f):
     @wraps(f)
@@ -54,11 +61,11 @@ async def preparing_scrap(tag):
 
 
 """ ------------------- API ROUTES ------------------- """
-@api.route('/users')
-@token_required
-def users():
-    response = User.query.all()
-    return jsonify(response)
+# @api.route('/users')
+# @token_required
+# def users():
+#     response = User.query.all()
+#     return jsonify(response)
 
 #register user - delete not necessery for this app
 # @api.route('/register', methods=['POST'])
@@ -69,17 +76,24 @@ def users():
 #         db.session.commit()
 #         return jsonify(user.to_dict()), 201
 
+@api.route('/rss/<name>', methods=['GET'])
+def rss(name):
+    if name == 'reddit':
+        url = configParser.get('RSS_LINKS', 'REDDIT_RSS')
+        feed_parser = feedParser(url)
+        return jsonify({'status': 'success', 'rss_entries': feed_parser})
+    else:
+        return 404
+
 # Podcasts route / using pythons rssfeeder library to process rss feed
 @api.route('/podcasts/<name>', methods=['GET'])
 def podcasts(name):
     if name == 'recode':
         feed_parser = feedParser('https://feeds.megaphone.fm/recodedecode')
-        return jsonify({'status': 'success',
-                        'rss_entries': feed_parser})
+        return jsonify({'status': 'success', 'rss_entries': feed_parser})
     elif name == 'earth911':
         feed_parser = feedParser('https://www.spreaker.com/show/2898651/episodes/feed')
-        return jsonify({'status': 'success',
-                        'rss_entries': feed_parser})
+        return jsonify({'status': 'success', 'rss_entries': feed_parser})
     else:
         return 404
 
@@ -110,6 +124,7 @@ def scraper():
 def search():
     if request.method == 'POST':
         result = request.get_json()
+        print(result)
         loop.run_until_complete(preparing_scrap('search/' + result['body']))
     return "OK"
 

@@ -9,6 +9,7 @@
         <ul id="menu">
           <li class="menu-item"><router-link to="/home">home</router-link></li>
           <li class="menu-item"><router-link to="/podcasts">podcasts</router-link></li>
+          <li class="menu-item"><router-link to="/rss">rss</router-link></li>
           <li class="menu-item" v-if="isAuthenticated"><router-link to="/torr">torr</router-link></li>
           <li class="menu-item" v-if="!isAuthenticated"><router-link to="/login">login</router-link></li>
           <li class="menu-item" v-if="isAuthenticated"><a href='/home' @click="logout">logout</a></li>

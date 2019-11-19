@@ -3,6 +3,7 @@
     <div class="row">
       <input type="text" class="form-control form-control-sm" v-model="search" placeholder=" filter">
       <Search />
+      <!-- <b-alert show dismissible class='success'><b>Logged in!</b></b-alert> -->
       <table class="table table-hover table-dark hover_img">
         <div v-if="torr_data.length">
         <thead>
@@ -64,7 +65,6 @@ export default {
   created() {
     this.getTorrData();
   },
-
 	computed: {
 		filterTitles: function() {
 			return this.torr_data.filter((item) => {
@@ -72,7 +72,6 @@ export default {
       })
     },
   },
-
   filters: {
     snippet(value) {
       return value.slice(0, 150)

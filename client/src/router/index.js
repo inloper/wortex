@@ -1,9 +1,9 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-// import Ping from '../components/Ping.vue'
 
 import Torr from '../views/Torr'
 import Podcasts from '../views/Podcasts'
+import Rss from '../views/Rss'
 import Home from '../views/Home'
 import NotFound404 from '../views/NotFound404'
 
@@ -13,11 +13,6 @@ import store from '../../store'
 Vue.use(VueRouter)
 
 const routes = [
-  // {
-  //   path: '/ping',
-  //   name: 'Ping',
-  //   component: Ping
-  // },
   {
     path: '/home', name: 'Home', component: Home,
   },
@@ -36,6 +31,9 @@ const routes = [
   },
   {
     path: '/podcasts', name: 'Podcasts', component: Podcasts
+  },
+  {
+    path: '/rss', name: 'Rss', component: Rss
   },
   {
     path: '/login', name: 'Login', component: Login
