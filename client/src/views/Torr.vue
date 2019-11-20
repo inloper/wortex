@@ -3,7 +3,7 @@
     <div class="row">
       <input type="text" class="form-control form-control-sm" v-model="search" placeholder=" filter">
       <Search />
-      <!-- <b-alert show dismissible class='success'><b>Logged in!</b></b-alert> -->
+      <b-alert show dismissible class='success'><b>Logged in!</b></b-alert>
       <table class="table table-hover table-dark hover_img">
         <div v-if="torr_data.length">
         <thead>
@@ -15,7 +15,7 @@
           </tr>
         </thead>
         <tbody v-if="torr_data.length">
-          <tr v-for="(item, index) in filterTitles.slice().reverse()" :key="index">
+          <tr v-for="(item, id) in filterTitles.slice().reverse()" :key="id"> 
             <th scope="row" class="gray-txt">{{ item.date }}</th>
             <th scope="row" class="gray-txt">{{ item.size }}</th>
             <td>
@@ -39,6 +39,7 @@
 <script>
 import axios from 'axios';
 import Search from '../components/Search'
+import { isValidJwt, EventBus } from '@/utils'
 
 export default {
   components: {
@@ -50,32 +51,36 @@ export default {
       search: ''
     }
   },
+
   methods: {
-    getTorrData() {
-      const path = 'http://localhost:5000/api/torr'
-      axios.get(path)
-        .then((res) => {
-          this.torr_data = res.data.torr_data;
+    loadDataFromStore() {
+      this.$store.dispatch('loadTorrData')
+        .then(res => {
+          this.torr_data = this.$store.state.loadedTorrData
+          // console.log(res.headers)
         })
-        .catch((error) => {
-          console.error(error);
-        });
-    },
+      }
   },
+
   created() {
-    this.getTorrData();
+    this.loadDataFromStore()
   },
+
 	computed: {
 		filterTitles: function() {
 			return this.torr_data.filter((item) => {
         return item.title.toLowerCase().match(this.search)
       })
     },
+    // isAuthenticated() {
+    //   return this.$store.getters.isAuthenticated
+    // }
   },
+
   filters: {
     snippet(value) {
       return value.slice(0, 150)
     }
-  }
+  },
 }
 </script>

@@ -2,20 +2,19 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 import { isValidJwt, EventBus } from '@/utils'
-import { authenticate, scrape, search } from '@/api'
+import { authenticate, scrape, search, fetchTorrData } from '@/api'
 
 Vue.use(Vuex)
 
 const state = {
   // single source of data
   user: {},
+  loadedTorrData: [],
   jwt: {'token': localStorage.getItem('token')}
 }
 
 const actions = {
-  // LOGIN / AUTHENTICATION
-  // asynchronous operations
-  login (context, userData) {
+  login(context, userData) { // LOGIN / AUTHENTICATION  // asynchronous operations
     context.commit('setUserData', { userData })
     return authenticate(userData)
       .then(response => context.commit('setJwtToken', { jwt: response.data }))
@@ -37,6 +36,13 @@ const actions = {
   //     })
   // },
 
+  loadTorrData(context) {
+    return fetchTorrData(context.state.jwt.token)
+      .then((response) => {
+        context.commit('setTorrDatas', response.data)
+      })
+  },
+
   // SCRAPER RELATED
   scraper() {
     return scrape()
@@ -53,8 +59,12 @@ const actions = {
 
 const mutations = {
   // isolated data mutations
+  setTorrDatas(state, payload) {
+    state.loadedTorrData = payload.torr_data
+    // console.log(this.state.loadedTorrData)
+  },
   setUserData (state, payload) {
-    // console.log('setUserData payload = ', payload)
+    // console.getTorrData('setUserData payload = ', payload)
     state.userData = payload.userData
   },
   setJwtToken (state, payload) {
@@ -64,14 +74,15 @@ const mutations = {
   },
   setBodyData(state, payload) {
     state.body = payload.body
-  }
+  },
 }
 
 const getters = {
   // reusable data accessors
   isAuthenticated (state) {
     return isValidJwt(state.jwt.token)
-  }
+  },
+  all_torr_data: state => state.loadTorrData
 }
 
 const store = new Vuex.Store({

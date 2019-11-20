@@ -16,12 +16,11 @@ from rss_feeder import feedParser
 api = Blueprint('api', __name__)
 loop = asyncio.get_event_loop()
 
-
-
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
 configParser = configparser.RawConfigParser()
 configParser.read(BASEDIR+'\\instance\\external_links.cfg')
 
+# Some of the API points require user authentication: scrape, torr
 def token_required(f):
     @wraps(f)
     def _verify(*args, **kwargs):
@@ -61,12 +60,6 @@ async def preparing_scrap(tag):
 
 
 """ ------------------- API ROUTES ------------------- """
-# @api.route('/users')
-# @token_required
-# def users():
-#     response = User.query.all()
-#     return jsonify(response)
-
 #register user - delete not necessery for this app
 # @api.route('/register', methods=['POST'])
 # def register():
@@ -113,15 +106,15 @@ def login():
 
 # start scraping process
 @api.route('/scraper', methods=['GET'])
-# @token_required
-def scraper():
+@token_required
+def scraper(current_user):
     loop.run_until_complete(preparing_scrap('browse/'))
     return "OK"
 
 # search string from the response on torr
 @api.route('/scraper/search=', methods=['POST'])
-# @token_required
-def search():
+@token_required
+def search(current_user):
     if request.method == 'POST':
         result = request.get_json()
         print(result)
@@ -130,8 +123,8 @@ def search():
 
 # Load data from the database and display them
 @api.route('/torr', methods=['GET', 'POST'])
-# @token_required
-def all_torr_data():
+@token_required
+def all_torr_data(current_user):
     results = TorrData.query.all()
     torr_data = []
 

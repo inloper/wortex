@@ -14,3 +14,7 @@ export function scrape() {
 export function search(body) {
   return axios.post(`${API_URL}/scraper/search=`, body)
 }
+export function fetchTorrData(jwt) {
+  // console.log(jwt)
+  return axios.get(`${API_URL}/torr`, { headers: { Authorization: `Bearer: ${jwt}` } })
+}
