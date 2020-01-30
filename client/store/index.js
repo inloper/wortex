@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 import { isValidJwt, EventBus } from '@/utils'
-import { authenticate, scrape, search, fetchTorrData } from '@/api'
+import { authenticate, scrape, search, fetchTorrData, register } from '@/api'
 
 Vue.use(Vuex)
 
@@ -26,15 +26,15 @@ const actions = {
   logout() {
     return delete localStorage.token
   },
-  // register (context, userData) {
-  //   context.commit('setUserData', { userData })
-  //   return register(userData)
-  //     .then(context.dispatch('login', userData))
-  //     .catch(error => {
-  //       console.log('Error Registering: ', error)
-  //       EventBus.$emit('failedRegistering: ', error)
-  //     })
-  // },
+  register (context, userData) {
+    context.commit('setUserData', { userData })
+    return register(userData)
+      .then(context.dispatch('login', userData))
+      .catch(error => {
+        console.log('Error Registering: ', error)
+        EventBus.$emit('failedRegistering: ', error)
+      })
+  },
 
   loadTorrData(context) {
     return fetchTorrData(context.state.jwt.token)

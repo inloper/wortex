@@ -60,14 +60,16 @@ async def preparing_scrap(tag):
 
 
 """ ------------------- API ROUTES ------------------- """
-#register user - delete not necessery for this app
-# @api.route('/register', methods=['POST'])
-# def register():
-#     if request.method == "POST":
-#         newUser = User(username=request.form['username'], password=request.form['password'])
-#         db.session.add(newUser)
-#         db.session.commit()
-#         return jsonify(user.to_dict()), 201
+# register user - delete not necessery for this app
+@api.route('/register', methods=['POST'])
+def register():
+    if request.method == "POST":
+        username = request.get_json()['username']
+        password = request.get_json()['password']
+        newUser = User(username=username, password=password)
+        db.session.add(newUser)
+        db.session.commit()
+        return jsonify(newUser.to_dict()), 201
 
 @api.route('/rss/<name>', methods=['GET'])
 def rss(name):
@@ -106,25 +108,24 @@ def login():
 
 # start scraping process
 @api.route('/scraper', methods=['GET'])
-@token_required
-def scraper(current_user):
+# @token_required
+def scraper():#current_user):
     loop.run_until_complete(preparing_scrap('browse/'))
     return "OK"
 
 # search string from the response on torr
 @api.route('/scraper/search=', methods=['POST'])
-@token_required
-def search(current_user):
+# @token_required
+def search():
     if request.method == 'POST':
         result = request.get_json()
-        print(result)
         loop.run_until_complete(preparing_scrap('search/' + result['body']))
     return "OK"
 
 # Load data from the database and display them
 @api.route('/torr', methods=['GET', 'POST'])
-@token_required
-def all_torr_data(current_user):
+# @token_required
+def all_torr_data():
     results = TorrData.query.all()
     torr_data = []
 

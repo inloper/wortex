@@ -24,6 +24,7 @@
             </div>
           </div>
           <!-- <div class="control">
+            <button @click="register">Reg</button>
             <a class="button is-large is-success" @click="register">Register</a>
           </div> -->
         </form>
@@ -50,21 +51,21 @@ export default {
       this.$store.dispatch('login', { username: this.username, password: this.password })
         .then(() => this.$router.push('/torr'))
     },
-    // register () {
-    //   this.$store.dispatch('register', { username: this.username, password: this.password })
-    //     .then(() => this.$router.push('/'))
-    // }
+    register () {
+      this.$store.dispatch('register', { username: this.username, password: this.password })
+        .then(() => this.$router.push('/'))
+    }
    },
   mounted () {
-    // EventBus.$on('failedRegistering', (msg) => {
-    //   this.errorMsg = msg
-    // })
+    EventBus.$on('failedRegistering', (msg) => {
+      this.errorMsg = msg
+    })
     EventBus.$on('failedAuthentication', (msg) => {
       this.errorMsg = msg
     })
   },
   beforeDestroy () {
-    // EventBus.$off('failedRegistering')
+    EventBus.$off('failedRegistering')
     EventBus.$off('failedAuthentication')
   }
 }
