@@ -30,7 +30,7 @@ Mako==1.1.0
 MarkupSafe==1.1.1
 marshmallow==3.2.1
 marshmallow-sqlalchemy==0.19.0
-numpy==1.17.3
+numpy==1.22.0
 pandas==0.25.3
 parsel==1.5.2
 Protego==0.1.15
